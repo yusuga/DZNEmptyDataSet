@@ -441,16 +441,21 @@ static char const * const kEmptyDataSetView =       "emptyDataSetView";
         
         [view updateConstraints];
         [view layoutIfNeeded];
-        
+
         CGFloat minimumContentHeight = self.ys_minimumContentHeight;
         if (minimumContentHeight > 0. && self.bounds.size.height - self.contentInset.top < minimumContentHeight) {
             CGSize size = self.contentSize;
             size.height = minimumContentHeight;
             self.contentSize = size;
             
+            /**
+             *  UITableViewにaddしたViewは、insetが考慮されたframeがセットされる。insetによりemptyViewのyがscrollViewの高さを超えてしまう場合にemptyViewが表示されない。そこでminimumContentHeightを作りemptyViewを表示させるようにしてみる。
+             *
+             *  本来ならAutolayouをいじるべきだが、めんどうなのでcontentViewのAutolayouが調整されたあとにemptyViewのframeを調整して無理やり調整する。
+             */
             CGRect f = view.frame;
-            f.origin.y = -view.bounds.size.height + minimumContentHeight/2. + view.contentView.bounds.size.height/2.;
-            view.frame = f;            
+            f.origin.y = -(view.bounds.size.height - (view.bounds.size.height - CGRectGetMaxY(view.contentView.frame))) + minimumContentHeight/2. + view.contentView.bounds.size.height/2.;
+            view.frame = f;
         }
         
         // Configure scroll permission
