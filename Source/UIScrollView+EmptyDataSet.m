@@ -58,6 +58,20 @@ static char const * const kEmptyDataSetView =       "emptyDataSetView";
     return view ? !view.hidden : NO;
 }
 
+- (CGFloat)ys_minimumContentHeight
+{
+    NSNumber *num = objc_getAssociatedObject(self, @selector(ys_minimumContentHeight));
+#if CGFLOAT_IS_DOUBLE
+    return [num doubleValue];
+#else
+    return [num floatValue];
+#endif
+}
+
+- (void)setYs_minimumContentHeight:(CGFloat)height
+{
+    objc_setAssociatedObject(self, @selector(ys_minimumContentHeight), @(height), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
 
 #pragma mark - Getters (Private)
 
@@ -427,6 +441,17 @@ static char const * const kEmptyDataSetView =       "emptyDataSetView";
         
         [view updateConstraints];
         [view layoutIfNeeded];
+        
+        CGFloat minimumContentHeight = self.ys_minimumContentHeight;
+        if (minimumContentHeight > 0. && self.bounds.size.height - self.contentInset.top < minimumContentHeight) {
+            CGSize size = self.contentSize;
+            size.height = minimumContentHeight;
+            self.contentSize = size;
+            
+            CGRect f = view.frame;
+            f.origin.y = -view.bounds.size.height + minimumContentHeight/2. + view.contentView.bounds.size.height/2.;
+            view.frame = f;            
+        }
         
         // Configure scroll permission
         self.scrollEnabled = [self dzn_isScrollAllowed];

@@ -32,6 +32,8 @@
  */
 - (void)reloadEmptyDataSet;
 
+@property (nonatomic) CGFloat ys_minimumContentHeight;
+
 @end
 
 
