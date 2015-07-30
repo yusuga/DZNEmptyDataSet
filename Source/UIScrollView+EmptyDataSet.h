@@ -32,7 +32,7 @@
  */
 - (void)reloadEmptyDataSet;
 
-@property (nonatomic) CGFloat ys_minimumContentHeight;
+@property (nonatomic) CGFloat ys_emptyDataSetFixedSize;
 
 @end
 

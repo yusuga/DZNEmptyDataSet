@@ -58,9 +58,9 @@ static char const * const kEmptyDataSetView =       "emptyDataSetView";
     return view ? !view.hidden : NO;
 }
 
-- (CGFloat)ys_minimumContentHeight
+- (CGFloat)ys_emptyDataSetFixedSize
 {
-    NSNumber *num = objc_getAssociatedObject(self, @selector(ys_minimumContentHeight));
+    NSNumber *num = objc_getAssociatedObject(self, @selector(ys_emptyDataSetFixedSize));
 #if CGFLOAT_IS_DOUBLE
     return [num doubleValue];
 #else
@@ -68,9 +68,9 @@ static char const * const kEmptyDataSetView =       "emptyDataSetView";
 #endif
 }
 
-- (void)setYs_minimumContentHeight:(CGFloat)height
+- (void)setYs_emptyDataSetFixedSize:(CGFloat)height
 {
-    objc_setAssociatedObject(self, @selector(ys_minimumContentHeight), @(height), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+    objc_setAssociatedObject(self, @selector(ys_emptyDataSetFixedSize), @(height), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 #pragma mark - Getters (Private)
@@ -442,10 +442,10 @@ static char const * const kEmptyDataSetView =       "emptyDataSetView";
         [view updateConstraints];
         [view layoutIfNeeded];
 
-        CGFloat minimumContentHeight = self.ys_minimumContentHeight;
-        if (minimumContentHeight > 0. && self.bounds.size.height - self.contentInset.top < minimumContentHeight) {
+        if ([self ys_emptyDataSetFixedSize] > 0.) {
+            CGFloat fixedHeight = [self ys_emptyDataSetFixedSize];
             CGSize size = self.contentSize;
-            size.height = minimumContentHeight;
+            size.height = fixedHeight;
             self.contentSize = size;
             
             /**
@@ -454,7 +454,7 @@ static char const * const kEmptyDataSetView =       "emptyDataSetView";
              *  本来ならAutolayouをいじるべきだが、めんどうなのでcontentViewのAutolayouが調整されたあとにemptyViewのframeを調整して無理やり調整する。
              */
             CGRect f = view.frame;
-            f.origin.y = -(view.bounds.size.height - (view.bounds.size.height - CGRectGetMaxY(view.contentView.frame))) + minimumContentHeight/2. + view.contentView.bounds.size.height/2.;
+            f.origin.y = -(view.bounds.size.height - (view.bounds.size.height - CGRectGetMaxY(view.contentView.frame))) + fixedHeight/2. + view.contentView.bounds.size.height/2.;
             view.frame = f;
         }
         
