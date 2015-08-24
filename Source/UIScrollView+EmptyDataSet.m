@@ -773,7 +773,6 @@ NSString *dzn_implementationKey(id target, SEL selector)
     }
     
     _customView = view;
-    _customView.translatesAutoresizingMaskIntoConstraints = !CGRectIsEmpty(view.frame);
     [self.contentView addSubview:_customView];
 }
 
